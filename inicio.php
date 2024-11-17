@@ -1,27 +1,22 @@
 <?php
-define('SERVIDOR', 'localhost');
-define('NOMBRE_BD', 'Usuarios');
-define('USUARIO', 'root');
-define('CLAVE', '');
-$opciones = [PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'];
+$host = 'localhost'; 
+$db   = 'usuarios'; 
+$user = 'root'; 
+$pass = ''; 
+$charset = 'utf8mb4';
+
+$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
+$options = [
+    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    PDO::ATTR_EMULATE_PREPARES   => false,
+];
 
 try {
-    // Conectar a la base de datos usando PDO
-    $pdo = new PDO('mysql:host=' . SERVIDOR . ';dbname=' . NOMBRE_BD, USUARIO, CLAVE, $opciones);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    echo '<p class="success">Conexión exitosa a la base de datos.</p>';
+    $pdo = new PDO($dsn, $user, $pass, $options);
+    echo "Conexión exitosa a la base de datos."; // Mensaje opcional para confirmar la conexión
 } catch (PDOException $e) {
-    // Manejar error en la conexión
-    echo '<p class="error">Error en la conexión: ' . htmlspecialchars($e->getMessage()) . '</p>';
-    die();
-}
-
-// Consulta para obtener los usuarios desde la base de datos
-try {
-    $stmt = $pdo->query("SELECT id_registro, nombre, email, comtaseña FROM registro");
-    $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);  // Obtenemos los datos en un array asociativo
-} catch (PDOException $e) {
-    echo 'Error al obtener los usuarios: ' . $e->getMessage();
-    die();
+    echo "Error en la conexión a la base de datos: " . $e->getMessage();
+    exit; // Detiene la ejecución si hay un error en la conexión
 }
 ?>
